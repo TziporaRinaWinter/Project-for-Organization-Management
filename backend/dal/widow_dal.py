@@ -51,7 +51,7 @@ class WidowDAL:
             'bank_account': (BankAccount, [widow_data.get("bank_account", {})]) if widow_data.get("bank_account") else None
         }
         # Calling the generic function to update the object with the relationships
-        return self.update_object(Widow, widow_id, widow_info, relationships)
+        return self.object_manager.update_object(Widow, widow_id, widow_info, relationships)
 
     def delete_widow(self, widow_id):
         filters = [Widow.id == widow_id]

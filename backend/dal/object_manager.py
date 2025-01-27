@@ -110,33 +110,6 @@ class ObjectManager:
             session.add(obj_instance)
         return obj_instance
 
-    def update_objects(self, model_class, schema_class, filters, updates, rel=None):
-        """Updating objects by filters, ignoring relations"""
-
-        with self.db_manager.get_session() as session:
-            query = session.query(model_class).filter(*filters)
-            objects_to_update = query.all()
-
-            print(objects_to_update)
-
-            for obj in objects_to_update:
-                for key, value in updates.items():
-                    if hasattr(obj, key):
-                        # התעלם מקשרים
-                        if isinstance(getattr(obj, key), (list, dict)):
-                            continue
-                        # אם השדה הוא אובייקט פנימי, התעלם ממנו
-                        if isinstance(value, dict) and not isinstance(getattr(obj, key), dict):
-                            continue
-                        # אם השדה הוא רשימה, התעלם ממנו
-                        if isinstance(value, list):
-                            continue
-                        setattr(obj, key, value)
-
-                session.add(obj)
-            session.commit()
-        return updates
-
     def update_object(self, model_class, obj_id, data: dict, relationships: dict = None):
         # Fetch the existing object
         with self.db_manager.get_session() as session:
@@ -169,9 +142,11 @@ class ObjectManager:
                 # Clear existing relationships if needed
                 current_relationships = getattr(obj, relationship)
                 if isinstance(current_relationships, List):
-                    current_relationships.clear()
+                    print(current_relationships)
+                    # current_relationships.clear()
 
                 if items:
+                    print(items)
                     for item_data in items:
                         related_obj = self.create_object(model_class, item_data, relationships=None, session=session)
                         if isinstance(getattr(obj, relationship), List):
