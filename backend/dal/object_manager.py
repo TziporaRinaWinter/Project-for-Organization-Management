@@ -143,15 +143,15 @@ class ObjectManager:
             obj = session.query(model_class).filter(model_class.id == obj_id).first()
             if not obj:
                 raise ValueError(f"{model_class.__name__} with id {obj_id} not found")
-    
+
             # Update the main object fields
             for key in model_class.__table__.columns.keys():
                 if key in data:
                     setattr(obj, key, data[key])
-    
+
             # Update relationships if they exist
             self._update_relationships(obj, relationships, session)
-    
+
             # Commit the changes
             session.add(obj)
             try:
@@ -159,24 +159,25 @@ class ObjectManager:
             except Exception as e:
                 session.rollback()
                 raise e
-    
+
             return obj
+        
+    def _update_relationships(self, obj, relationships, session):
+        # Update relations if they exist
+        if relationships:
+            for relationship, (model_class, items) in relationships.items():
+                # Clear existing relationships if needed
+                current_relationships = getattr(obj, relationship)
+                if isinstance(current_relationships, List):
+                    current_relationships.clear()
 
-    # def update_objects(self, model_class,schema_class, filters, updates):
-
-    #     """עדכון אובייקטים לפי פילטרים"""
-    #     print("in update")
-    #     with self.db_manager.get_session() as session:
-
-    #         query = session.query(model_class).filter(and_(*filters))
-    #         query = query.first()
-    #         update_dict=updates.dict()
-    #         print(update_dict.items())
-    #         for key, value in update_dict.items():
-    #             setattr(query, key, value)
-
-    #         # return [schema_class.from_orm(query)]
-    #         return updates
+                if items:
+                    for item_data in items:
+                        related_obj = self.create_object(model_class, item_data, relationships=None, session=session)
+                        if isinstance(getattr(obj, relationship), List):
+                            getattr(obj, relationship).append(related_obj)
+                        else:
+                            setattr(obj, relationship, related_obj)
 
     def delete_objects(self, model_class, filters):
         """Delete records by filters"""

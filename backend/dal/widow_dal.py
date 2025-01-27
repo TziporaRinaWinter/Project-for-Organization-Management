@@ -43,7 +43,6 @@ class WidowDAL:
         # Prepare the data for update
         widow_info = {key: widow_data[key] for key in widow_data if
                       key not in ['orphans', 'relatives', 'address', 'bank_account']}
-
         # Build relationship dict
         relationships = {
             'orphans': (Orphan, [data for data in widow_data.get('orphans', [])]),
@@ -51,7 +50,6 @@ class WidowDAL:
             'address': (Address, [widow_data.get("address", {})]) if widow_data.get("address") else None,
             'bank_account': (BankAccount, [widow_data.get("bank_account", {})]) if widow_data.get("bank_account") else None
         }
-
         # Calling the generic function to update the object with the relationships
         return self.update_object(Widow, widow_id, widow_info, relationships)
 
