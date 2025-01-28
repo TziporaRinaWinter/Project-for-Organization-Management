@@ -1,9 +1,6 @@
 from db.DB_manager import DBManager
 from dal.object_manager import ObjectManager
-from models.models import Widow, Orphan, Relative
-from models.schema import WidowSchema
-
-from models.models import Address, BankAccount
+from models.models import Widow, Orphan, Relative, Address, BankAccount
 
 
 class WidowDAL:
@@ -16,7 +13,7 @@ class WidowDAL:
     def get_widow_with_rel(self, widow_id):
         relationships = ["bank_account", "address", "orphans", "relatives"]
         filters = [Widow.id == widow_id]
-        return self.object_manager.get_objects(Widow, WidowSchema, relationships=relationships, filters=filters)
+        return self.object_manager.get_objects(Widow, Widow.schema(), relationships=relationships, filters=filters)
 
     def get_widow(self, widow_id):
         filters = {"id": widow_id}
@@ -37,7 +34,7 @@ class WidowDAL:
 
     def update_widow(self, widow_id, updates):
         filters = [Widow.id == widow_id]
-        return self.object_manager.update_objects(Widow, WidowSchema, filters, updates)
+        return self.object_manager.update_objects(Widow, Widow.schema(), filters, updates)
     
     def update_widow(self, widow_id, widow_data):
         # Prepare the data for update

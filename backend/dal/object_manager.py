@@ -139,12 +139,6 @@ class ObjectManager:
         # Update relations if they exist
         if relationships:
             for relationship, (model_class, items) in relationships.items():
-                # Clear existing relationships if needed
-                current_relationships = getattr(obj, relationship)
-                if isinstance(current_relationships, List):
-                    print(current_relationships)
-                    # current_relationships.clear()
-
                 if items:
                     print(items)
                     for item_data in items:
