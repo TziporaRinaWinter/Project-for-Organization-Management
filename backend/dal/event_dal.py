@@ -1,37 +1,52 @@
-from sqlalchemy.orm import Session
-from models import Event
+from db.DB_manager import DBManager
+from dal.object_manager import ObjectManager
+from models.models import Event, Orphan, Widow
+
 
 class EventDAL:
-    def __init__(self, session: Session):
-        self.session = session
+    def __init__(self, db_manager: DBManager):
+        self.object_manager = ObjectManager(db_manager)
 
     def get_all_events(self):
-        return self.session.query(Event).all()
+        return self.object_manager.get_objects_whithout_rel(Event)
+
+    def get_event_with_rel(self, event_id):
+        relationships = ["orphans", "widows"]
+        filters = [Event.id == event_id]
+        return self.object_manager.get_objects(Event, Event.schema(), relationships=relationships, filters=filters)
 
     def get_event(self, event_id):
-        return self.session.query(Event).filter(Event.id == event_id).first()
+        filters = {"id": event_id}
+        return self.object_manager.get_objects_whithout_rel(Event, filters)
 
     def create_event(self, event_data):
-        event = event(**event_data)
-        self.session.add(event)
-        self.session.commit()
-        return event
+        event_info = {key: event_data[key] for key in event_data if key not in ["orphans", "widows"]}
+        # Build relationship dict
+        relationships = {
+            'widows': (Widow, [data for data in event_data.get('widows', [])]),
+            'orphans': (Orphan, [data for data in event_data.get('orphans', [])])
+        }
+        # Calling the generic function to create the object with the relationships
+        return self.object_manager.create_object(Event, event_info, relationships)
 
+    def update_event(self, event_id, updates):
+        filters = [Event.id == event_id]
+        return self.object_manager.update_objects(Event, Event.schema(), filters, updates)
+    
     def update_event(self, event_id, event_data):
-        event = self.session.query(Event).filter(Event.id == event_id).first()
-        if event:
-            for key, value in event_data.items():
-                setattr(event, key, value)
-            self.session.commit()
-        return event
+        # Prepare the data for update
+        event_info = {key: event_data[key] for key in event_data if key not in ["orphans", "widows"]}
+        # Build relationship dict
+        relationships = {
+            'widows': (Widow, [data for data in event_data.get('widows', [])]),
+            'orphans': (Orphan, [data for data in event_data.get('orphans', [])])
+        }
+        # Calling the generic function to update the object with the relationships
+        return self.object_manager.update_object(Event, event_id, event_info, relationships)
 
     def delete_event(self, event_id):
-        event = self.session.query(Event).filter(Event.id == event_id).first()
-        if event:
-            self.session.delete(event)
-            self.session.commit()
-        return event
+        filters = [Event.id == event_id]
+        return self.object_manager.delete_objects(Event, filters)
 
     def delete_all_events(self):
-        self.session.query(Event).delete()
-        self.session.commit()
+        return self.object_manager.delete_objects(Event)
