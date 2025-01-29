@@ -1,26 +1,26 @@
-from dal.orphan_dal import OrphanDAL
+from dal.event_dal import EventDAL
 
-class OrphanBL:
-    def __init__(self, orphan_dal: OrphanDAL):
-        self.orphan_dal = orphan_dal
+class EventBL:
+    def __init__(self, event_dal: EventDAL):
+        self.event_dal = event_dal
 
-    def get_all_orphans(self):
-        return self.orphan_dal.get_all_orphans()
+    def get_all_events(self):
+        return self.event_dal.get_all_events()
 
-    def get_orphan(self, orphan_id):
-        return self.orphan_dal.get_orphan(orphan_id)
+    def get_event(self, event_id):
+        return self.event_dal.get_event(event_id)
 
-    def get_orphan_with_rel(self, orphan_id):
-        return self.orphan_dal.get_orphan_with_rel(orphan_id)
+    def get_event_with_rel(self, event_id):
+        return self.event_dal.get_event_with_rel(event_id)
 
-    def create_orphan(self, orphan_data):
-        return self.orphan_dal.create_orphan(orphan_data)
+    def create_event(self, event_data):
+        return self.event_dal.create_event(event_data)
 
-    def update_orphan(self, orphan_id, orphan_data):
-        return self.orphan_dal.update_orphan(orphan_id, orphan_data)
+    def update_event(self, event_id, event_data):
+        return self.event_dal.update_event(event_id, event_data)
 
-    def delete_orphan(self, orphan_id):
-        return self.orphan_dal.delete_orphan(orphan_id)
+    def delete_event(self, event_id):
+        return self.event_dal.delete_event(event_id)
 
-    def delete_all_orphans(self):
-        return self.orphan_dal.delete_all_orphans()
+    def delete_all_events(self):
+        return self.event_dal.delete_all_events()
