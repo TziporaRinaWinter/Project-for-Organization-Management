@@ -38,6 +38,7 @@ class Widow(Base):
     mobile_phone = Column(String)
     email = Column(String)
     birth_date = Column(Date)
+    hebrew_birth_date = Column(String)
     widowhood_date = Column(Date)
     num_of_unmarried_children = Column(Integer)
     num_of_minor_children = Column(Integer)
@@ -65,6 +66,7 @@ class Orphan(Base):
     last_name = Column(String)
     school_id = Column(Integer, ForeignKey('schools.id'))
     birth_date = Column(Date)
+    hebrew_birth_date = Column(String)
     gender = Column(String)
     age_group = Column(String)
 

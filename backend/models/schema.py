@@ -13,6 +13,7 @@ class OrphanBase(BaseSchema):
     first_name: str
     last_name: str
     birth_date: Optional[date]
+    hebrew_birth_date: str
     gender: str
     age_group: str
 
@@ -62,6 +63,7 @@ class WidowBase(BaseSchema):
     mobile_phone: Optional[str]
     email: Optional[str]
     birth_date: date
+    hebrew_birth_date: str
     widowhood_date: date
     num_of_unmarried_children: int
     num_of_minor_children: Optional[int]
