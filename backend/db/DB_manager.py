@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
-from env import ENV
+from db.env import ENV
 
 class DBManager:
     def __init__(self):

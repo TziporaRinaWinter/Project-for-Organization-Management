@@ -31,10 +31,6 @@ class WidowDAL:
         }
         # Calling the generic function to create the object with the relationships
         return self.object_manager.create_object(Widow, widow_info, relationships)
-
-    def update_widow(self, widow_id, updates):
-        filters = [Widow.id == widow_id]
-        return self.object_manager.update_objects(Widow, Widow.schema(), filters, updates)
     
     def update_widow(self, widow_id, widow_data):
         # Prepare the data for update
