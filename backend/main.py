@@ -119,11 +119,15 @@
 
 from fastapi import FastAPI
 from controller.widow_controller import router as widow_router
+from controller.event_controller import router as event_router
+from controller.orphan_controller import router as orphan_router
 import uvicorn
 
 app = FastAPI()
 
-app.include_router(widow_router)
+app.include_router(widow_router, prefix="/api")
+app.include_router(event_router, prefix="/api")
+app.include_router(orphan_router, prefix="/api")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)

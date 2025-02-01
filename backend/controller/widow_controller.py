@@ -4,7 +4,7 @@ from injector import inject
 from container import injector
 
 
-router = APIRouter()
+router = APIRouter(tags=["Widows"])
 
 @inject
 def get_widow_bl() -> WidowBL:
