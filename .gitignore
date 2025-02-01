@@ -1,3 +1,7 @@
+# React
+node_modules/
+build/
+
 # Logs
 logs
 *.log
@@ -22,3 +26,13 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# Python
+__pycache__/
+*.idea
+*.pyc
+*.pyo
+env/
+*.venv/
+*.env
