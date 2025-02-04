@@ -1,5 +1,5 @@
 import React from "react";
-import GenericList from "./GenericList";
+import GenericList from "../GenericList";
 
 const OrphansList = () => {
   const data = [

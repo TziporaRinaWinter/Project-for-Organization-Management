@@ -118,12 +118,23 @@
 # session.close()
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from controller.widow_controller import router as widow_router
 from controller.event_controller import router as event_router
 from controller.orphan_controller import router as orphan_router
 import uvicorn
 
 app = FastAPI()
+origins = [
+    "http://localhost:5173",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(widow_router, prefix="/api")
 app.include_router(event_router, prefix="/api")

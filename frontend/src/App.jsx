@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import WidowsList from "./components/WidowsList";
-import OrphansList from "./components/OrphansList";
-import EventsList from "./components/EventsList";
-import Home from "./components/Home";
+import WidowsList from "./components/widowComponents/WidowsList";
+import OrphansList from "./components/orphanComponents/OrphansList";
+import EventsList from "./components/eventComponents/EventsList";
+import Home from "./components/homeComponents/Home";
 import Header from "./Header";
 
 const pages = [
