@@ -3,40 +3,37 @@ import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
 import WidowService from "../../services/WidowService";
 import { Button, Paper } from "@mui/material";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
   {
     field: "identity_number",
     headerName: "מ.ז.",
     width: 140,
-    // valueGetter: (params) => params.row.identity_number || "",
   },
   {
     field: "first_name",
     headerName: "שם",
     width: 120,
     sortable: true,
-    // valueGetter: (params) => params.row.first_name || "",
   },
   {
     field: "last_name",
     headerName: "משפחה",
     width: 120,
     sortable: true,
-    // valueGetter: (params) => params.row.last_name || "",
   },
   {
     field: "mobile_phone",
     headerName: "נייד",
     width: 140,
-    // valueGetter: (params) => params.row.phone || "",
   },
   {
     field: "action",
     headerName: "",
     width: 90,
     renderCell: (params) => (
-      <Button onClick={() => handleButtonClick(params.row.id)}>
+      <Button onClick={() => params.onSelectWidow(params.row.id)}>
         <BorderColorIcon color="success" />
       </Button>
     ),
@@ -47,7 +44,7 @@ const WidowsList = () => {
   const [widows, setWidows] = useState([]);
   const [error, setError] = useState(null);
   const widowService = new WidowService();
-  const apiRef = useGridApiRef();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadWidows = async () => {
@@ -66,11 +63,13 @@ const WidowsList = () => {
     return <div>Error: {error}</div>;
   }
 
+  const handleSelectWidow = (id) => {
+    navigate(`/mather/${id}`);
+  };
+
   const paginationModel = {
     page: 0,
     pageSize: 3,
-    textAlign: "right",
-    footerRowSelected: "שורות נבחרות: {0}",
   };
 
   return (
@@ -87,7 +86,17 @@ const WidowsList = () => {
       >
         <DataGrid
           rows={widows}
-          columns={columns}
+          columns={columns.map((col) => ({
+            ...col,
+            renderCell:
+              col.field === "action"
+                ? (params) => (
+                    <Button onClick={() => handleSelectWidow(params.row.id)}>
+                      <BorderColorIcon color="success" />
+                    </Button>
+                  )
+                : col.renderCell,
+          }))}
           initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[3, 10, 50]}
           checkboxSelection
