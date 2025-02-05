@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
-import Paper from "@mui/material/Paper";
 import WidowService from "../../services/WidowService";
+import { Button, Paper } from "@mui/material";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
 
 const columns = [
   {
@@ -30,6 +31,16 @@ const columns = [
     width: 140,
     // valueGetter: (params) => params.row.phone || "",
   },
+  {
+    field: "action",
+    headerName: "",
+    width: 90,
+    renderCell: (params) => (
+      <Button onClick={() => handleButtonClick(params.row.id)}>
+        <BorderColorIcon color="success" />
+      </Button>
+    ),
+  },
 ];
 
 const WidowsList = () => {
@@ -55,7 +66,12 @@ const WidowsList = () => {
     return <div>Error: {error}</div>;
   }
 
-  const paginationModel = { page: 0, pageSize: 3 };
+  const paginationModel = {
+    page: 0,
+    pageSize: 3,
+    textAlign: "right",
+    footerRowSelected: "שורות נבחרות: {0}",
+  };
 
   return (
     <>
@@ -65,7 +81,7 @@ const WidowsList = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          width: "60%",
+          width: "80%",
           margin: "0 auto",
         }}
       >
@@ -73,11 +89,16 @@ const WidowsList = () => {
           rows={widows}
           columns={columns}
           initialState={{ pagination: { paginationModel } }}
-          pagination
           pageSizeOptions={[3, 10, 50]}
           checkboxSelection
-          // getRowId={(row) => row.id}
-          // localeText={{ footerRowSelected: "שורות נבחרות: {0}" }}
+          getRowId={(row) => row.id}
+          localeText={{
+            footerRowSelected: (count) => `שורות נבחרות: ${count}`,
+            footerTotalRows: () => "סך הכל שורות:",
+            footerPaginationLabel: (from, to, count) =>
+              `עמוד ${from} מתוך ${to}`,
+            footerPaginationRowsPerPage: () => "שורות בעמוד:",
+          }}
           sx={{
             border: 0,
             "& .MuiDataGrid-cell": {
@@ -85,8 +106,8 @@ const WidowsList = () => {
               textAlign: "right",
             },
             ".css-1gak8h1-MuiToolbar-root-MuiTablePagination-toolbar": {
-              // display: "none",
-              textAlign: "right",
+              direction: "ltr",
+              justifySelf: "center",
             },
           }}
         />
