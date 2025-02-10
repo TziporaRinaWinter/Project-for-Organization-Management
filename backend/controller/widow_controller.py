@@ -23,7 +23,7 @@ def get_widow(widow_id: int, widow_bl: WidowBL = Depends(get_widow_bl)):
 
 @router.get("/widows.rel/{widow_id}")
 def get_widow_with_rel(widow_id: int, widow_bl: WidowBL = Depends(get_widow_bl)):
-    widow = widow_bl.get_widow(widow_id)
+    widow = widow_bl.get_widow_with_rel(widow_id)
     if not widow:
         raise HTTPException(status_code=404, detail="Widow not found")
     return widow

@@ -22,7 +22,7 @@ def get_orphan(orphan_id: int, orphan_bl: OrphanBL = Depends(get_orphan_bl)):
 
 @router.get("/orphans.rel/{orphan_id}")
 def get_orphan_with_rel(orphan_id: int, orphan_bl: OrphanBL = Depends(get_orphan_bl)):
-    orphan = orphan_bl.get_orphan(orphan_id)
+    orphan = orphan_bl.get_orphan_with_rel(orphan_id)
     if not orphan:
         raise HTTPException(status_code=404, detail="Orphan not found")
     return orphan

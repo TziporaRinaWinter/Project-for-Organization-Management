@@ -18,7 +18,6 @@ class WidowService {
   async getWidowById(widowID) {
     try {
       const widow = await this.apiService.get(`/widows.rel/${widowID}`);
-      //   console.log(widow);
       return widow;
     } catch (error) {
       console.error("Error fetching widow:", error);
@@ -28,7 +27,6 @@ class WidowService {
   async createWidow(widowData) {
     try {
       const newWidow = await this.apiService.post(`/widows/`, widowData);
-      //   console.log(newWidow);
       return newWidow;
     } catch (error) {
       console.error("Error creating widow:", error);
@@ -51,7 +49,6 @@ class WidowService {
   async deleteWidow(widowID) {
     try {
       await this.apiService.delete(`/widows/${widowID}`);
-      //   console.log(`Widow with id ${id} deleted.`);
     } catch (error) {
       console.error("Error deleting widow:", error);
     }

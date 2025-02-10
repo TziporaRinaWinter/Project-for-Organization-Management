@@ -22,7 +22,7 @@ def get_event(event_id: int, event_bl: EventBL = Depends(get_event_bl)):
 
 @router.get("/events.rel/{event_id}")
 def get_event_with_rel(event_id: int, event_bl: EventBL = Depends(get_event_bl)):
-    event = event_bl.get_event(event_id)
+    event = event_bl.get_event_with_rel(event_id)
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     return event
