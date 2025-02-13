@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import WidowService from "../../services/WidowService";
+import calculateAge from "../../Utils/Utils";
 import {
   Box,
   TextField,
@@ -23,11 +24,11 @@ const WidowDetails = ({ widowId }) => {
     const loadWidow = async () => {
       try {
         const data = await widowService.getWidowById(widowId);
-        setWidow(data[0]);
-        setFormData(data[0]);
         // Calculate age
         const age = calculateAge(data[0].birth_date);
-        setFormData((prev) => ({ ...prev, age }));
+        data[0].age = age;
+        setWidow(data[0]);
+        setFormData(data[0]);
       } catch (err) {
         console.error(err.message);
       }
@@ -41,21 +42,6 @@ const WidowDetails = ({ widowId }) => {
       setFormData((prev) => ({ ...prev, age }));
     }
   }, [formData.birth_date]);
-
-  const calculateAge = (birthDate) => {
-    if (!birthDate) return 0;
-    const birth = new Date(birthDate);
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
-    ) {
-      age--;
-    }
-    return age;
-  };
 
   const handleEdit = () => setIsEditing(true);
 

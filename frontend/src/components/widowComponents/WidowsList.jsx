@@ -69,7 +69,7 @@ const WidowsList = () => {
 
   const paginationModel = {
     page: 0,
-    pageSize: 3,
+    pageSize: 5,
   };
 
   return (
@@ -98,7 +98,7 @@ const WidowsList = () => {
                 : col.renderCell,
           }))}
           initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[3, 10, 50]}
+          pageSizeOptions={[5, 10, 50]}
           checkboxSelection
           getRowId={(row) => row.id}
           localeText={{
