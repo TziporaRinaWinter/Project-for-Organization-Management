@@ -9,6 +9,7 @@ class BaseSchema(BaseModel):
 
 
 class OrphanBase(BaseSchema):
+    id: int
     identity_number: str
     first_name: str
     last_name: str
@@ -78,7 +79,7 @@ class WidowSchema(WidowBase):
 
 
 class OrphanSchema(OrphanBase):
-    id: int
+    # id: int
     mother_id: int
     school_id: Optional[int]
 

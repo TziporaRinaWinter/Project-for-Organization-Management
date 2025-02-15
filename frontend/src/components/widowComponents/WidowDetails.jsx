@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { createRoot } from "react-dom/client";
+import Swal from "sweetalert2";
 import WidowService from "../../services/WidowService";
 import calculateAge from "../../Utils/Utils";
 import {
@@ -13,6 +15,8 @@ import {
   Grid2,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
+import OrphanDetails from "../orphanComponents/OrphanDetails";
 
 const WidowDetails = ({ widowId }) => {
   const [widow, setWidow] = useState(null);
@@ -49,6 +53,11 @@ const WidowDetails = ({ widowId }) => {
     try {
       await widowService.updateWidow(widowId, formData);
       setIsEditing(false);
+      Swal.fire({
+        title: "נשמר בהצלחה!",
+        icon: "success",
+        draggable: true,
+      });
     } catch (error) {
       console.error(error);
     }
@@ -79,14 +88,6 @@ const WidowDetails = ({ widowId }) => {
     });
   };
 
-  const handleChildChange = (index, e) => {
-    const { name, value } = e.target;
-    const updatedChildren = formData.orphans.map((child, i) =>
-      i === index ? { ...child, [name]: value } : child
-    );
-    setFormData({ ...formData, orphans: updatedChildren });
-  };
-
   const handleAddChild = () => {
     const newChild = {
       first_name: "",
@@ -103,6 +104,24 @@ const WidowDetails = ({ widowId }) => {
   const handleRemoveChild = (index) => {
     const updatedChildren = formData.orphans.filter((_, i) => i !== index);
     setFormData({ ...formData, orphans: updatedChildren });
+  };
+
+  const handleChild = (index, isNew, motherID) => {
+    Swal.fire({
+      title: "ערוך את פרטי הילד",
+      html: '<div id="edit-child-form"></div>',
+      showConfirmButton: false,
+      willOpen: () => {
+        const formElement = document.getElementById("edit-child-form");
+        const root = createRoot(formElement);
+        root.render(
+          <OrphanDetails
+            orphanId={index}
+            isNew={{ new: isNew, id: motherID }}
+          />
+        );
+      },
+    });
   };
 
   const handleRelativeChange = (index, e) => {
@@ -303,49 +322,40 @@ const WidowDetails = ({ widowId }) => {
     (formData.orphans || []).map((child, index) => (
       <Paper key={index} sx={{ marginBottom: 2 }}>
         <Grid2 container spacing={2}>
-          {renderFields(
-            [
-              {
-                id: `child-first-name-${index}`,
-                name: "first_name",
-                label: "שם פרטי",
-                value: child.first_name,
-                type: "text",
-              },
-              {
-                id: `child-last-name-${index}`,
-                name: "last_name",
-                label: "שם משפחה",
-                value: child.last_name,
-                type: "text",
-              },
-              {
-                id: `child-identity-number-${index}`,
-                name: "identity_number",
-                label: "מ.ז.",
-                value: child.identity_number,
-                type: "text",
-              },
-              {
-                id: `child-birth-date-${index}`,
-                name: "birth_date",
-                label: "תאריך לידה",
-                value: child.birth_date,
-                type: "date",
-              },
-            ],
-            (e) => handleChildChange(index, e)
+          {renderFields([
+            {
+              id: `child-identity-number-${index}`,
+              name: "identity_number",
+              label: "מ.ז.",
+              value: child.identity_number,
+              type: "text",
+            },
+            {
+              id: `child-first-name-${index}`,
+              name: "first_name",
+              label: "שם פרטי",
+              value: child.first_name,
+              type: "text",
+            },
+            {
+              id: `child-birth-date-${index}`,
+              name: "birth_date",
+              label: "תאריך לידה",
+              value: child.birth_date,
+              type: "date",
+            },
+          ])}
+          {isEditing && (
+            <Button
+              sx={{ margin: 2 }}
+              variant="outlined"
+              color="success"
+              onClick={() => handleChild(child.id, false, 0)}
+            >
+              <BorderColorIcon />
+            </Button>
           )}
         </Grid2>
-        {isEditing && (
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => handleRemoveChild(index)}
-          >
-            הסר ילד
-          </Button>
-        )}
       </Paper>
     ));
 
@@ -426,7 +436,10 @@ const WidowDetails = ({ widowId }) => {
           <AccordionDetails>
             {renderChildrenFields()}
             {isEditing && (
-              <Button variant="contained" onClick={handleAddChild}>
+              <Button
+                variant="contained"
+                onClick={() => handleChild(null, true, formData.id)}
+              >
                 הוסף ילד
               </Button>
             )}

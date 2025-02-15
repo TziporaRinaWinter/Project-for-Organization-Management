@@ -18,7 +18,7 @@ import {
   Grid2,
 } from "@mui/material";
 
-const OrphanDetails = ({ orphanId }) => {
+const OrphanDetails = ({ orphanId = null, isNew = { new: false, id: 0 } }) => {
   const [orphan, setOrphan] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ age: 0 });
@@ -26,15 +26,33 @@ const OrphanDetails = ({ orphanId }) => {
 
   useEffect(() => {
     const loadOrphan = async () => {
-      try {
-        const data = await orphanService.getOrphanById(orphanId);
-        // Calculate age
-        const age = calculateAge(data[0].birth_date);
-        data[0].age = age;
-        setFormData(data[0]);
-        setOrphan(data[0]);
-      } catch (err) {
-        console.error(err.message);
+      if (isNew.new) {
+        setFormData({
+          age: 0,
+          identity_number: "",
+          first_name: "",
+          last_name: "",
+          birth_date: "",
+          hebrew_birth_date: "",
+          mother_id: isNew.id,
+          school: {
+            school_name: "",
+            class_name: "",
+            teacher_name: "",
+            teacher_phone: "",
+          },
+        });
+        setOrphan(null);
+      } else {
+        try {
+          const data = await orphanService.getOrphanById(orphanId);
+          const age = calculateAge(data[0].birth_date);
+          data[0].age = age;
+          setFormData(data[0]);
+          setOrphan(data[0]);
+        } catch (err) {
+          console.error(err.message);
+        }
       }
     };
     loadOrphan();
@@ -51,13 +69,17 @@ const OrphanDetails = ({ orphanId }) => {
     setIsEditing(true);
   };
   const handleCancel = () => {
-    setFormData(orphan);
     setIsEditing(false);
+    setFormData(orphan);
   };
 
   const handleSave = async () => {
     try {
-      await orphanService.updateOrphan(orphanId, formData);
+      if (isNew) {
+        await orphanService.createOrphan(formData);
+      } else {
+        await orphanService.updateOrphan(orphanId, formData);
+      }
       setIsEditing(false);
       // אפשר להוסיף כאן הודעת הצלחה
     } catch (err) {
@@ -85,6 +107,13 @@ const OrphanDetails = ({ orphanId }) => {
       name: "last_name",
       label: "שם משפחה",
       value: formData.last_name || "",
+      type: "text",
+    },
+    {
+      id: "hebrew-birth-date",
+      name: "hebrew_birth_date",
+      label: "יומולדת",
+      value: formData.hebrew_birth_date || "",
       type: "text",
     },
     {
@@ -169,52 +198,57 @@ const OrphanDetails = ({ orphanId }) => {
         <BorderColorIcon color="success" />
       </Button>
       <form noValidate autoComplete="off" style={{ marginTop: 20 }}>
-        <Grid2 container spacing={2}>
-          {renderFields(personalFields)}
-          <Grid2 item xs={12} sm={6}>
-            <FormControl fullWidth disabled={!isEditing}>
-              <InputLabel id="age-group-label">קבוצת גיל</InputLabel>
-              <Select
-                labelId="age-group-label"
-                value={formData.age_group || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, age_group: e.target.value })
-                }
-              >
-                <MenuItem value="גן">גן</MenuItem>
-                <MenuItem value="חיידר">חיידר</MenuItem>
-                <MenuItem value="בית ספר יסודי">בית ספר יסודי</MenuItem>
-                <MenuItem value="סמינר">סמינר</MenuItem>
-                <MenuItem value="ישיבה קטנה">ישיבה קטנה</MenuItem>
-                <MenuItem value="ישיבה גדולה">ישיבה גדולה</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid2>
-          <Grid2 item xs={12} sm={6}>
-            <FormControl fullWidth disabled={!isEditing}>
-              <InputLabel id="gender">מין</InputLabel>
-              <Select
-                labelId="gender"
-                value={formData.gender || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, gender: e.target.value })
-                }
-              >
-                <MenuItem value="בן">בן</MenuItem>
-                <MenuItem value="בת">בת</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid2>
-        </Grid2>
+        <Card style={{ marginTop: 20 }}>
+          <CardContent>
+            <Grid2 container spacing={2}>
+              {renderFields(personalFields)}
+              <Grid2 xs={12} sm={6}>
+                <FormControl fullWidth disabled={!isEditing}>
+                  <InputLabel id="age-group-label">קבוצת גיל</InputLabel>
+                  <Select
+                    labelId="age-group-label"
+                    value={formData.age_group || ""}
+                    onChange={(e) =>
+                      setFormData({ ...formData, age_group: e.target.value })
+                    }
+                  >
+                    <MenuItem value="גן">גן</MenuItem>
+                    <MenuItem value="חיידר">חיידר</MenuItem>
+                    <MenuItem value="בית ספר יסודי">בית ספר יסודי</MenuItem>
+                    <MenuItem value="סמינר">סמינר</MenuItem>
+                    <MenuItem value="ישיבה קטנה">ישיבה קטנה</MenuItem>
+                    <MenuItem value="ישיבה גדולה">ישיבה גדולה</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid2>
+              <Grid2 xs={12} sm={6}>
+                <FormControl fullWidth disabled={!isEditing}>
+                  <InputLabel id="gender">מין</InputLabel>
+                  <Select
+                    labelId="gender"
+                    value={formData.gender || ""}
+                    onChange={(e) =>
+                      setFormData({ ...formData, gender: e.target.value })
+                    }
+                  >
+                    <MenuItem value="בן">בן</MenuItem>
+                    <MenuItem value="בת">בת</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid2>
+            </Grid2>
+          </CardContent>
+        </Card>
+
+        <Card style={{ marginTop: 20 }}>
+          <CardContent>
+            <Typography variant="h6">פרטי מוסד לימודים:</Typography>
+            <Grid2 container spacing={2}>
+              {renderFields(schoolFields)}
+            </Grid2>
+          </CardContent>
+        </Card>
       </form>
-
-      <Card style={{ marginTop: 20 }}>
-        <CardContent>
-          <Typography variant="h6">פרטי מוסד לימודים:</Typography>
-          {renderFields(schoolFields)}
-        </CardContent>
-      </Card>
-
       {isEditing && (
         <>
           <Button
