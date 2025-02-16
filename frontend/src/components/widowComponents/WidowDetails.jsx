@@ -88,29 +88,12 @@ const WidowDetails = ({ widowId }) => {
     });
   };
 
-  const handleAddChild = () => {
-    const newChild = {
-      first_name: "",
-      last_name: "",
-      identity_number: "",
-      birth_date: "",
-    };
-    setFormData((prev) => ({
-      ...prev,
-      orphans: [...prev.orphans, newChild],
-    }));
-  };
-
-  const handleRemoveChild = (index) => {
-    const updatedChildren = formData.orphans.filter((_, i) => i !== index);
-    setFormData({ ...formData, orphans: updatedChildren });
-  };
-
   const handleChild = (index, isNew, motherID) => {
     Swal.fire({
       title: "ערוך את פרטי הילד",
       html: '<div id="edit-child-form"></div>',
       showConfirmButton: false,
+      width: "1000px",
       willOpen: () => {
         const formElement = document.getElementById("edit-child-form");
         const root = createRoot(formElement);

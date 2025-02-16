@@ -1,6 +1,7 @@
 # React
 node_modules/
 build/
+src/ToolBar
 
 # Logs
 logs

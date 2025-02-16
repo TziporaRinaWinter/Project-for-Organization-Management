@@ -70,16 +70,10 @@ class WidowBase(BaseSchema):
     num_of_minor_children: Optional[int]
 
 
-class WidowSchema(WidowBase):
-    id: int
-    orphans: List[OrphanBase]
-    relatives: List[RelativeBase]
-    bank_account: BankAccountBase
-    address: AddressBase
-
-
 class OrphanSchema(OrphanBase):
     # id: int
+    school: SchoolBase
+    mother: WidowBase
     mother_id: int
     school_id: Optional[int]
 
@@ -87,6 +81,13 @@ class OrphanSchema(OrphanBase):
 class RelativeSchema(RelativeBase):
     id: int
     widow_id: int
+
+class WidowSchema(WidowBase):
+    id: int
+    orphans: List[OrphanBase]
+    relatives: List[RelativeSchema]
+    bank_account: BankAccountBase
+    address: AddressBase
 
 
 class BankAccountSchema(BankAccountBase):

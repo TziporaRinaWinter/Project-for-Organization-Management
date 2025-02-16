@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import OrphanService from "../../services/OrphanService";
 import calculateAge from "../../Utils/Utils";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
@@ -81,10 +82,34 @@ const OrphanDetails = ({ orphanId = null, isNew = { new: false, id: 0 } }) => {
         await orphanService.updateOrphan(orphanId, formData);
       }
       setIsEditing(false);
-      // אפשר להוסיף כאן הודעת הצלחה
+      Swal.fire({
+        title: "נשמר בהצלחה!",
+        icon: "success",
+        draggable: true,
+      });
     } catch (err) {
       console.error(err.message);
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type } = e.target;
+
+    const newValue = type === "date" ? value : value;
+
+    const nameParts = name.split(".");
+    setFormData((prevData) => {
+      const updatedData = { ...prevData };
+      if (nameParts.length > 1) {
+        updatedData[nameParts[0]] = {
+          ...prevData[nameParts[0]],
+          [nameParts[1]]: newValue,
+        };
+      } else {
+        updatedData[name] = newValue;
+      }
+      return updatedData;
+    });
   };
 
   const personalFields = [
@@ -181,9 +206,7 @@ const OrphanDetails = ({ orphanId = null, isNew = { new: false, id: 0 } }) => {
               disabled: field.disabled,
               required: true,
             }}
-            onChange={(e) =>
-              setFormData({ ...formData, [field.name]: e.target.value })
-            }
+            onChange={handleChange}
             fullWidth
           />
         </Grid2>

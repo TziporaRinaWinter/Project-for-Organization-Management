@@ -11,7 +11,7 @@ class OrphanDAL:
         return self.object_manager.get_objects_whithout_rel(Orphan)
 
     def get_orphan_with_rel(self, orphan_id):
-        relationships = ["school"]
+        relationships = ["school", "mother"]
         filters = [Orphan.id == orphan_id]
         return self.object_manager.get_objects(Orphan, Orphan.schema(), relationships=relationships, filters=filters)
 

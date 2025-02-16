@@ -148,7 +148,7 @@ class ObjectManager:
                         else:
                             setattr(obj, relationship, related_obj)
 
-    def delete_objects(self, model_class, filters):
+    def delete_objects(self, model_class, filters=[]):
         """Delete records by filters"""
         with self.db_manager.get_session() as session:
             query = session.query(model_class).filter(*filters)
